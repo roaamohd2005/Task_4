@@ -73,8 +73,23 @@ describe('Authentication controller integration', () => {
   - store the issued token for use in subsequent tests
   */
   test('authenticates the same user and issues a fresh JWT', async () => {
-    // This test will always fail until the TODO above is implemented.
-    expect(true).toBe(false);
+    const response = await fetch(`${baseUrl}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: credentials.email, password: credentials.password })
+    });
+
+    const payload = await response.json();
+
+    // Successful login should return 200 alongside a token and the public
+    // portion of the user record.
+    expect(response.status).toBe(200);
+    expect(payload.token).toBeTruthy();
+    expect(payload.user.email).toBe(credentials.email.toLowerCase());
+    expect(payload.user).not.toHaveProperty('passwordHash');
+
+    // Save the token so subsequent tests can use it.
+    issuedToken = payload.token;
   });
 
   test('returns the public profile for the currently authenticated user', async () => {

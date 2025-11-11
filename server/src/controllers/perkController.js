@@ -55,6 +55,7 @@ export async function getAllPerksPublic(req, res, next) {
   try {
     // Extract query parameters for search and filter
     const { search, merchant } = req.query;
+    console.log('/api/perks/all called with', { search, merchant });
     
     // Build query object dynamically
     let query = {};
@@ -75,6 +76,8 @@ export async function getAllPerksPublic(req, res, next) {
       .populate('createdBy', 'name email') // Include creator information
       .sort({ createdAt: -1 })
       .lean();
+
+    console.log('getAllPerksPublic found', perks.length, 'perks');
 
     res.json({ perks });
   } catch (err) {
